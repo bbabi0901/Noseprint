@@ -26,7 +26,7 @@ class ResNet():
         return x
 
     def _stack(self, input, filters, num_blocks, strides=(2, 2)):
-        x = self._residual_block(self, input, filters, strides=strides, short_cut=True)
+        x = self._residual_block(input, filters, strides=strides, short_cut=True)
         for i in range(2, num_blocks):
             x = self._residual_block(x, filters)
         return x

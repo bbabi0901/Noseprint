@@ -10,7 +10,7 @@ from resnet import ResNet
 
 def set_model(architecture, image_size, num_landmarks):
     inputs = Input(shape=(image_size, image_size, 3))
-    x, _ = ResNet.resnet(inputs=inputs, architecture=architecture)
+    x, _ = ResNet().resnet(inputs=inputs, architecture=architecture)
     x = Dropout(0.3)(x)
     x = Flatten()(x)
     x = Dense(1024, activation='relu')(x)
