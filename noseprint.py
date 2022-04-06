@@ -41,10 +41,10 @@ class Train():
         x_data = np.asarray(data.item().get('img')).astype(np.float32)
         y_data = np.asarray(data.item().get('landmark')).astype(np.float32)
 
-        if x_data[1:] != (self.IMAGE_SIZE, self.IMAGE_SIZE, 3):
+        if x_data.shape[1:] != (self.IMAGE_SIZE, self.IMAGE_SIZE, 3):
             raise ValueError('shape of input image must be (224, 224, 3)')
 
-        self.num_landmarks = np.asarray(y_data.item().get('landmark')).astype(np.float32)
+        self.num_landmarks = y_data.shape[1]
 
         x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=test_size, shuffle=shuffle)
 
