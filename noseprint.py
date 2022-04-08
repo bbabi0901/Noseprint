@@ -8,6 +8,7 @@ from keras.models import Model
 
 from resnet import ResNet
 
+
 def set_model(architecture, image_size, num_landmarks):
     inputs = Input(shape=(image_size, image_size, 3))
     x, _ = ResNet().resnet(inputs=inputs, architecture=architecture)
@@ -15,7 +16,7 @@ def set_model(architecture, image_size, num_landmarks):
     x = Flatten()(x)
     x = Dense(1024, activation='relu')(x)
     x = Dense(256, activation='relu')(x)
-    outputs = Dense(2 * num_landmarks, activation='linear')(x)
+    outputs = Dense(num_landmarks, activation='linear')(x)
 
     return Model(inputs=inputs, outputs=outputs)
 
@@ -50,20 +51,20 @@ class Train():
 
         x_train = np.reshape(x_train / 255, (-1, self.IMAGE_SIZE, self.IMAGE_SIZE, 3))
         x_test = np.reshape(x_test / 255, (-1, self.IMAGE_SIZE, self.IMAGE_SIZE, 3))
-        y_train = np.reshape(y_train, (-1, 2 * self.num_landmarks))
-        y_test = np.reshape(y_test, (-1, 2 * self.num_landmarks))
+        y_train = np.reshape(y_train, (-1, self.num_landmarks))
+        y_test = np.reshape(y_test, (-1, self.num_landmarks))
 
         return (x_train, y_train), (x_test, y_test)
 
     def train(self, epochs, model_dir):
-        if os.path.exists(model_dir):
+        if not os.path.exists(model_dir):
             os.mkdir(model_dir)
 
         self.resnet_model.compile(optimizer='adam', loss='mse', metrics=['acc'])
 
         callbacks = [
             EarlyStopping(patience=self.PATIENTCE),
-            ModelCheckpoint(filepath=model_dir + 'resnet101_{epoch:02d}-{val_loss:.2f}.h5',
+            ModelCheckpoint(filepath=model_dir + '/resnet101_{epoch:02d}-{val_loss:.2f}.h5',
                             moniter='val_loss',
                             save_best_only=True,
                             save_weights_only=True
@@ -88,7 +89,7 @@ class Inference():
 
         assert architecture in ['resnet50', 'resnet101']
         self.ARCHITECTURE = architecture
-        self.num_landmarks = num_landmarks
+        self.num_landmarks = num_landmarks * 2
 
         self.resnet_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
         self.resnet_model.load_weights(weights)
