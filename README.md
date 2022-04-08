@@ -13,8 +13,8 @@
 
 
 # Training
-Before training, you need to prepare a dataset in .npy file. 
-The .npy file should be dictionary type with two keys; 'img', which have values in form of (number of data, 224, 224, 3) and 'landmark', which have values in form of (number of data, 2 * number of landmark). 
+Before training, you need to prepare a dataset in .npy file.\
+The .npy file should be dictionary type with two keys; 'img', which have values in form of (number of data, 224, 224, 3) and 'landmark', which have values in form of (number of data, 2 * number of landmark).\
 This is an example.
 
 ```python
@@ -128,9 +128,9 @@ This is an example.
 }
 ```
 
-After your dataset is ready, you should load the dataset and decide the architecture of the ResNet model.
-There are two types of architecture; resnet50 and resnet101.
-While training, the weights of keras model will be saved in models directory.
+After your dataset is ready, load the dataset and decide the architecture of the ResNet model.\
+There are two types of architecture; resnet50 and resnet101.\
+While training, the weights of keras model will be saved in models directory.\
 The training will terminates after executing all epochs you set, or it ends if the validation loss doesn't get smaller after 20 epochs. 
 
 ```python
@@ -141,7 +141,7 @@ noseprint.train(epochs=100, model_dir='./models')
 ```
 
 # Inferencing
-After you finish the training, you can check the performance of your model. 
+After you finish the training, you can check the performance of your model.\
 The funcion "get_landmarks()" will return the coordinates of each landmarks.
 
 <table>
