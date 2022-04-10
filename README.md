@@ -144,12 +144,6 @@ noseprint.train(epochs=100, model_dir='./models')
 After you finish the training, you can check the performance of your model.\
 The funcion "get_landmarks()" will return the coordinates of each landmarks.
 
-<table>
-  <tr>
-    <td><img src="image/nose2.jpg"></td>
-    <td><img src="image/landmark2.png"></td>
-  </tr>
-</table>
 
 ```python
 from noseprint import Inference
@@ -158,3 +152,9 @@ noseprint = Inference(weights='weights path', architecture='resnet101', num_land
 landmarks = noseprint.get_landmarks(image='image path')
 ```
 
+<table>
+  <tr>
+    <td><img src="image/nose2.jpg"></td>
+    <td><img src="image/landmark2.png"></td>
+  </tr>
+</table>
