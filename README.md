@@ -1,14 +1,27 @@
 # Landmark detection by ResNet
+The final goal of the project is to extact noseprints from dogs with Deep Learning model.\
+Each noseprints have unique features like fingerprints, so we can use it for identification.\
+To extract noseprint from certain area in nose, the landmarks, specific points in nose, is essential.\
+Also, the landmarks are to find whether the dog in the picture is in proper pose or not.\
+As a first step of the project, let's build a Deep Learning model for landmark detection with ResNet, a powerful algorithm with simple structure.
+
 <table>
   <tr>
     <td><img src="image/nose.jpg"></td>
     <td><img src="image/landmark.png"></td>
   </tr>
 </table>
+<table>
+  <tr>
+    <td><img src="image/nose2.jpg"></td>
+    <td><img src="image/landmark2.png"></td>
+  </tr>
+</table>
 
 ## The project contains:
 1. Training for landmark detection in dog nose using ResNet
 2. Inference with the trained model.
+
 
 
 
@@ -154,7 +167,7 @@ landmarks = noseprint.get_landmarks(image='image path')
 
 <table>
   <tr>
-    <td><img src="image/nose2.jpg"></td>
-    <td><img src="image/landmark2.png"></td>
+    <td><img src="image/nose3.jpg"></td>
+    <td><img src="image/landmark3.png"></td>
   </tr>
 </table>
