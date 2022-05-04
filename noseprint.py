@@ -7,11 +7,15 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateSchedule
 from keras.models import Model
 
 from resnet import ResNet
+from hourglass import Hourglass
 
 
 def set_model(architecture, image_size, num_landmarks):
     inputs = Input(shape=(image_size, image_size, 3))
-    x, _ = ResNet().resnet(inputs=inputs, architecture=architecture)
+    if architecture == "hourglass":
+        x = Hourglass().hourglass_model(inputs=inputs, num_landmarks=num_landmarks, num_channels=image_size)
+    else:
+        x, _ = ResNet().resnet_model(inputs=inputs, architecture=architecture)
     x = Dropout(0.3)(x)
     x = Flatten()(x)
     x = Dense(1024, activation='relu')(x)
@@ -30,11 +34,11 @@ class Train():
         if not str(dataset).endswith('.npy'):
             raise ImportError("Dataset should be npy file")
 
-        assert architecture in ['resnet50', 'resnet101']
+        assert architecture in ['resnet50', 'resnet101', 'hourglass']
         self.ARCHITECTURE = architecture
 
-        self.train_data, self.val_data = self._load_dataset(dataset)
-        self.resnet_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
+        self.train_data, self.val_data = self._load_dataset(dataset) 
+        self.noseprint_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
 
     def _load_dataset(self, path, test_size=0.3, shuffle=True):
         data = np.load(path, allow_pickle=True)
@@ -60,11 +64,11 @@ class Train():
         if not os.path.exists(model_dir):
             os.mkdir(model_dir)
 
-        self.resnet_model.compile(optimizer='adam', loss='mse', metrics=['acc'])
+        self.noseprint_model.compile(optimizer='adam', loss='mse', metrics=['acc'])
 
         callbacks = [
             EarlyStopping(patience=self.PATIENTCE),
-            ModelCheckpoint(filepath=model_dir + '/resnet101_{epoch:02d}-{val_loss:.2f}.h5',
+            ModelCheckpoint(filepath=model_dir + '/{self.ARCHITECTURE}_{epoch:02d}-{val_loss:.2f}.h5',
                             moniter='val_loss',
                             save_best_only=True,
                             save_weights_only=True
@@ -72,7 +76,7 @@ class Train():
             LearningRateScheduler(self._scheduler)
         ]
 
-        self.resnet_model.fit(self.train_data[0], self.train_data[1], epochs=epochs, batch_size=self.BATCH_SIZE, shuffle=True,
+        self.noseprint_model.fit(self.train_data[0], self.train_data[1], epochs=epochs, batch_size=self.BATCH_SIZE, shuffle=True,
                   validation_data=self.val_data, verbose=1, callbacks=callbacks)
 
     def _scheduler(self, epoch):
@@ -87,12 +91,12 @@ class Inference():
         if not str(weights).endswith('.h5'):
             raise ImportError("Weights should be h5py file.")
 
-        assert architecture in ['resnet50', 'resnet101']
+        assert architecture in ['resnet50', 'resnet101', 'hourglass']
         self.ARCHITECTURE = architecture
         self.num_landmarks = num_landmarks * 2
 
-        self.resnet_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
-        self.resnet_model.load_weights(weights)
+        self.noseprint_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
+        self.noseprint_model.load_weights(weights)
         print("Weights loaded.")
 
     def get_landmarks(self, image):
@@ -100,13 +104,13 @@ class Inference():
         self.INPUT_SHAPE = self.img.shape
         if self.INPUT_SHAPE != (self.IMAGE_SIZE, self.IMAGE_SIZE, 3):
             img_rsz, ratio, top, left = self._resize_img()
-            inputs = (img_rsz.astype('float32') / 255.).reshape(-1, 224, 224, 3)
-            landmarks = self.resnet_model.predict(inputs)[0].reshape(-1, 2)
+            inputs = (img_rsz.astype('float32') / 255.).reshape(-1, self.IMAGE_SIZE, self.IMAGE_SIZE, 3)
+            landmarks = self.noseprint_model.predict(inputs)[0].reshape(-1, 2)
             landmarks = (landmarks - np.array([left, top])) / ratio
 
         else:
-            inputs = (self.img.astype('float32') / 255.).reshape(-1, 224, 224, 3)
-            landmarks = self.resnet_model.predict(inputs)[0].reshape(-1, 2)
+            inputs = (self.img.astype('float32') / 255.).reshape(-1, self.IMAGE_SIZE, self.IMAGE_SIZE, 3)
+            landmarks = self.noseprint_model.predict(inputs)[0].reshape(-1, 2)
 
         return landmarks
 

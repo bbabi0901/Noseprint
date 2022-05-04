@@ -31,7 +31,7 @@ class ResNet():
             x = self._residual_block(x, filters)
         return x
 
-    def resnet(self, inputs, architecture):
+    def resnet_model(self, inputs, architecture):
         # stage1
         x = ZeroPadding2D((3, 3))(inputs)
         x = Conv2D(64, (7, 7), strides=(2, 2), padding='valid', use_bias=True)(x)

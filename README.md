@@ -1,9 +1,9 @@
-# Landmark detection by ResNet
+# Landmark detection by ResNet / Hourglass Model
 The final goal of the project is to extact noseprints from dogs with Deep Learning model.\
 Each noseprints have unique features like fingerprints, so we can use it for identification.\
 To extract noseprint from certain area in nose, the landmarks, specific points in nose, is essential.\
 Also, the landmarks are to find whether the dog in the picture is in proper pose or not.\
-As a first step of the project, let's build a Deep Learning model for landmark detection with ResNet, a powerful algorithm with simple structure.
+As a first step of the project, let's build a Deep Learning model for landmark detection with ResNet or Hourglass architecture, a powerful algorithm with simple structure.
 
 <table>
   <tr>
@@ -19,7 +19,7 @@ As a first step of the project, let's build a Deep Learning model for landmark d
 </table>
 
 ## The project contains:
-1. Training for landmark detection in dog nose using ResNet
+1. Training for landmark detection in dog nose using ResNet or Hourglass arhcitecture
 2. Inference with the trained model.
 
 
@@ -141,8 +141,8 @@ This is an example.
 }
 ```
 
-After your dataset is ready, load the dataset and decide the architecture of the ResNet model.\
-There are two types of architecture; resnet50 and resnet101.\
+After your dataset is ready, load the dataset and decide the architecture of the model.\
+There are three types of architecture; resnet50, resnet101 and hourglass.\
 While training, the weights of keras model will be saved in models directory.\
 The training will terminates after executing all epochs you set, or it ends if the validation loss doesn't get smaller after 20 epochs. 
 
