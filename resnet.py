@@ -37,19 +37,19 @@ class ResNet():
         x = Conv2D(64, (7, 7), strides=(2, 2), padding='valid', use_bias=True)(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
-        C1 = x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
+        x = MaxPooling2D((3, 3), strides=(2, 2), padding='same')(x)
 
         # stage2
-        C2 = x = self._stack(x, 64, num_blocks=3, strides=(1, 1))
+        x = self._stack(x, 64, num_blocks=3, strides=(1, 1))
 
         # stage3
-        C3 = x = self._stack(x, 128, num_blocks=4)
+        x = self._stack(x, 128, num_blocks=4)
 
         # stage4
         block_count = {"resnet50": 6, "resnet101": 23}[architecture]
-        C4 = x = self._stack(x, 256, num_blocks=block_count)
+        x = self._stack(x, 256, num_blocks=block_count)
 
         # stage5
-        C5 = x = self._stack(x, 512, num_blocks=3)
+        x = self._stack(x, 512, num_blocks=3)
 
-        return x, [C1, C2, C3, C4, C5]
+        return x

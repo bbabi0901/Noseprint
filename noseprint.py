@@ -15,17 +15,15 @@ def set_model(architecture, image_size, num_landmarks):
     if architecture == "hourglass":
         x = Hourglass().hourglass_model(inputs=inputs, num_landmarks=num_landmarks, num_channels=image_size)
     else:
-        x, _ = ResNet().resnet_model(inputs=inputs, architecture=architecture)
-    x = Dropout(0.3)(x)
+        x = ResNet().resnet_model(inputs=inputs, architecture=architecture)
+    x = Dropout(0.4)(x)
     x = Flatten()(x)
-    x = Dense(1024, activation='relu')(x)
-    x = Dense(256, activation='relu')(x)
+    x = Dense(512, activation='relu')(x)
     outputs = Dense(num_landmarks, activation='linear')(x)
 
     return Model(inputs=inputs, outputs=outputs)
 
 class Train():
-    BATCH_SIZE = 8
     LEARNING_RATE = 0.001
     IMAGE_SIZE = 224
     PATIENTCE = 20
@@ -60,7 +58,7 @@ class Train():
 
         return (x_train, y_train), (x_test, y_test)
 
-    def train(self, epochs, model_dir):
+    def train(self, epochs, batch_size, model_dir):
         if not os.path.exists(model_dir):
             os.mkdir(model_dir)
 
@@ -68,7 +66,7 @@ class Train():
 
         callbacks = [
             EarlyStopping(patience=self.PATIENTCE),
-            ModelCheckpoint(filepath=model_dir + '/{self.ARCHITECTURE}_{epoch:02d}-{val_loss:.2f}.h5',
+            ModelCheckpoint(filepath=model_dir + '/noseprint_{epoch:02d}-{val_loss:.2f}.h5',
                             moniter='val_loss',
                             save_best_only=True,
                             save_weights_only=True
@@ -76,7 +74,7 @@ class Train():
             LearningRateScheduler(self._scheduler)
         ]
 
-        self.noseprint_model.fit(self.train_data[0], self.train_data[1], epochs=epochs, batch_size=self.BATCH_SIZE, shuffle=True,
+        self.noseprint_model.fit(self.train_data[0], self.train_data[1], epochs=epochs, batch_size=batch_size, shuffle=True,
                   validation_data=self.val_data, verbose=1, callbacks=callbacks)
 
     def _scheduler(self, epoch):

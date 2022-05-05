@@ -150,7 +150,7 @@ The training will terminates after executing all epochs you set, or it ends if t
 from noseprint import Train
 
 noseprint = Train(dataset='dataset path', architecture='resnet101')
-noseprint.train(epochs=100, model_dir='./models')
+noseprint.train(epochs=100, batch_size=8, model_dir='./models')
 ```
 
 # Inferencing
