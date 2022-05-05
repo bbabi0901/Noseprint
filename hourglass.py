@@ -3,8 +3,6 @@ from keras import backend
 
 
 class Hourglass():
-    num_stacks = 4
-    
     # bottom is input, _skip is short_cut
     def _bottleneck_block(self, input, num_out_channels, block_name):
         if backend.int_shape(input)[-1] == num_out_channels:
@@ -132,10 +130,10 @@ class Hourglass():
 
         return head_next_stage
 
-    def hourglass_model(self, inputs, num_classes, num_channels):
+    def hourglass_model(self, inputs, num_classes, num_channels, num_stacks=4):
         front_features = self._front_module(inputs, num_channels)
         head_next_stage = front_features
-        for i in range(self.num_stacks):
+        for i in range(num_stacks):
             head_next_stage = self._hourglass_module(head_next_stage, num_classes, num_channels, i)
         
         return head_next_stage

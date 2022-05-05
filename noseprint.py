@@ -10,18 +10,6 @@ from resnet import ResNet
 from hourglass import Hourglass
 
 
-def set_model(architecture, image_size, num_landmarks):
-    inputs = Input(shape=(image_size, image_size, 3))
-    if architecture == "hourglass":
-        x = Hourglass().hourglass_model(inputs=inputs, num_landmarks=num_landmarks, num_channels=image_size)
-    else:
-        x = ResNet().resnet_model(inputs=inputs, architecture=architecture)
-    x = Dropout(0.4)(x)
-    x = Flatten()(x)
-    x = Dense(512, activation='relu')(x)
-    outputs = Dense(num_landmarks, activation='linear')(x)
-
-    return Model(inputs=inputs, outputs=outputs)
 
 class Train():
     LEARNING_RATE = 0.001
@@ -36,7 +24,20 @@ class Train():
         self.ARCHITECTURE = architecture
 
         self.train_data, self.val_data = self._load_dataset(dataset) 
-        self.noseprint_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
+        self.noseprint_model = self.set_model(self.ARCHITECTURE, self.num_landmarks)
+
+    def set_model(self, architecture, num_landmarks):
+        inputs = Input(shape=(self.IMAGE_SIZE, self.IMAGE_SIZE, 3))
+        if architecture == "hourglass":
+            x = Hourglass().hourglass_model(inputs=inputs, num_landmarks=num_landmarks, num_channels=self.IMAGE_SIZE)
+        else:
+            x = ResNet().resnet_model(inputs=inputs, architecture=architecture)
+        x = Dropout(0.4)(x)
+        x = Flatten()(x)
+        x = Dense(512, activation='relu')(x)
+        outputs = Dense(num_landmarks, activation='linear')(x)
+
+        return Model(inputs=inputs, outputs=outputs)
 
     def _load_dataset(self, path, test_size=0.3, shuffle=True):
         data = np.load(path, allow_pickle=True)
@@ -82,8 +83,7 @@ class Train():
             self.LEARNING_RATE = self.LEARNING_RATE / 10
         return self.LEARNING_RATE
 
-class Inference():
-    IMAGE_SIZE = 224
+class Inference(Train):
 
     def __init__(self, weights, architecture, num_landmarks):
         if not str(weights).endswith('.h5'):
@@ -93,7 +93,7 @@ class Inference():
         self.ARCHITECTURE = architecture
         self.num_landmarks = num_landmarks * 2
 
-        self.noseprint_model = set_model(self.ARCHITECTURE, self.IMAGE_SIZE, self.num_landmarks)
+        self.noseprint_model = self.set_model(self.ARCHITECTURE, self.num_landmarks)
         self.noseprint_model.load_weights(weights)
         print("Weights loaded.")
 
