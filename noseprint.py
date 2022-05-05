@@ -83,6 +83,8 @@ class Train():
             self.LEARNING_RATE = self.LEARNING_RATE / 10
         return self.LEARNING_RATE
 
+
+#############################
 class Inference(Train):
 
     def __init__(self, weights, architecture, num_landmarks):
@@ -125,3 +127,9 @@ class Inference(Train):
         new_im = cv2.copyMakeBorder(img_rsz, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0, 0, 0])
 
         return new_im, ratio, top, left
+
+    def show_landmarks(self, image):
+        landmarks = self.get_landmarks(image)
+        for x, y in landmarks:
+            img_landmark = cv2.circle(self.img, (x, y), 3, (0, 255, 0), -1)
+        return img_landmark

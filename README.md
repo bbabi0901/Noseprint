@@ -155,14 +155,36 @@ noseprint.train(epochs=100, batch_size=8, model_dir='./models')
 
 # Inferencing
 After you finish the training, you can check the performance of your model.\
-The funcion "get_landmarks()" will return the coordinates of each landmarks.
-
+The funcion "get_landmarks()" will return an array of landmarks.
 
 ```python
 from noseprint import Inference
 
 noseprint = Inference(weights='weights path', architecture='resnet101', num_landmarks=10)
 landmarks = noseprint.get_landmarks(image='image path')
+```
+```python
+[[109.880104  79.38798 ]
+ [105.11736  126.143135]
+ [148.36232   45.564014]
+ [100.81828  191.37447 ]
+ [ 38.335293 103.12261 ]
+ [ 98.82869   46.07913 ]
+ [113.325516  85.44805 ]
+ [106.412926 184.7699  ]
+ [ 89.97804  100.04876 ]
+ [130.65442  127.0089  ]]
+```
+
+The funcion "show_landmarks()" will return the image with marks on each landmarks.
+
+```python
+import cv2
+from noseprint import Inference
+
+noseprint = Inference(weights='weights path', architecture='resnet101', num_landmarks=10)
+image = noseprint.show_landmarks(image='image path')
+cv2.imshow(image)
 ```
 
 <table>
